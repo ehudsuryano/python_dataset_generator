@@ -6,11 +6,18 @@ from personal_data import PersonalData
 from collections import Counter
 
 class UserGenerator:
-    
     def __init__(self, first_names_file, last_names_file, countries_cities_file):
-        self.first_names = pd.read_csv(first_names_file,header=None)
-        self.last_names = pd.read_csv(last_names_file,header=None)
-        self.countries_cities = pd.read_csv(countries_cities_file)
+        self.first_names = self.parse_files(first_names_file)
+        self.last_names = self.parse_files(last_names_file)
+        self.countries_cities = self.parse_files(countries_cities_file,0)
+
+    def parse_files(self,filename,header_value = None):
+        try:
+            data = pd.read_csv(filename,header= header_value)
+            return data
+        except (pd.errors.ParserError, FileNotFoundError, pd.errors.EmptyDataError,IOError) as e:
+            print(f"An error occurred {e} while trying to read {filename}. using default values")
+            return None
 
     def calculate_check_digit(self, id_number):
         """Calculate the check digit for an Israeli ID number."""
@@ -38,9 +45,13 @@ class UserGenerator:
         return id_number + str(check_digit)
 
     def generate_first_name(self):
+        if self.first_names is None:
+            return random.choice(['John', 'Jane', 'Alice', 'Bob', 'Eve', 'Charlie', 'David', 'Grace', 'Heidi', 'Ivy'])
         return random.choice(self.first_names[0].to_list())
 
     def generate_last_name(self):
+        if self.last_names is None:
+            return random.choice(['Doe', 'Smith', 'Johnson', 'Brown', 'Lee', 'Kim', 'Singh', 'Garcia', 'Martinez', 'Lopez'])
         return random.choice(self.last_names[0].to_list())
 
     def generate_email(self,first_name, last_name):
@@ -48,9 +59,13 @@ class UserGenerator:
         return f'{first_name.lower()}.{last_name.lower()}@{random.choice(domains)}'
 
     def generate_country(self):
+        if self.countries_cities is None:
+            return random.choice(['USA', 'UK', 'Canada', 'Australia', 'Germany', 'France', 'Italy', 'Japan', 'China', 'India'])
         return random.choice(self.countries_cities['country'].to_list())
 
     def generate_city(self):
+        if self.countries_cities is None:
+            return random.choice(['New York', 'London', 'Paris', 'Tokyo', 'Sydney', 'Berlin', 'Rome', 'Beijing', 'Mumbai', 'Toronto'])
         return random.choice(self.countries_cities['city'].to_list())
 
     def generate_personal_data(self):
