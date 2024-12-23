@@ -81,7 +81,9 @@ class UserGenerator:
     def save_sequence(self, filename, new_sequence):
         # Create a DataFrame for the new sequence
         new_row = pd.DataFrame([obj.__dict__ for obj in new_sequence]) #new_row = pd.DataFrame(new_sequence)
-
-        # Append to the CSV file
-        new_row.to_csv(filename, header=False, index=False,quoting=csv.QUOTE_NONE)
-
+        try:
+            # Append to the CSV file
+            new_row.to_csv(filename, header=False, index=False)
+        except IOError:
+            print(f"An error occurred while trying to save to {filename}.")
+            return

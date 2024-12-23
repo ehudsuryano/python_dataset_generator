@@ -21,7 +21,7 @@ def main():
         existing_sequences = set()
         for _ in range(num_sequences):
             new_sequence = generator.generate_personal_data()
-            print(new_sequence)
+            print(new_sequence,f" {_} ")
             existing_sequences.add(new_sequence)
 
         generator.save_sequence(filename, existing_sequences)
